@@ -14,6 +14,8 @@ from urllib.parse import urlparse, quote
 
 import httpx
 
+import counter
+
 
 FALLBACK_SITEKEY = "0x4AAAAAADW3lFh0T4M341uS"
 
@@ -39,6 +41,7 @@ class Step:
     success: Optional[bool] = None
     userid: Optional[str] = None
     title: Optional[str] = None
+    count: Optional[int] = None
 
     def as_sse(self) -> str:
         import json
@@ -256,7 +259,8 @@ async def solve_stream(
         success = (r_post.status_code == 200 and userid is not None and "Success!" in r_post.text)
 
         if success:
-            yield Step("done", "VERIFIED", success=True, userid=userid, title=post_title)
+            new_count = await counter.increment()
+            yield Step("done", "VERIFIED", success=True, userid=userid, title=post_title, count=new_count)
         else:
             if userid and "Success!" in r_post.text:
                 msg = f"Partial success (userid {userid}) but verification incomplete."

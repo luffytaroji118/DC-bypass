@@ -33,7 +33,7 @@ type Status =
 
 type SolveEvent =
   | { step: "queued" | "loading" | "solving" | "verifying"; message: string }
-  | { step: "done"; success: boolean; message?: string; userid?: string }
+  | { step: "done"; success: boolean; message?: string; userid?: string; count?: number }
   | { step: "error"; message: string };
 
 function toFullUrl(input: string): string | null {
@@ -49,10 +49,24 @@ function toFullUrl(input: string): string | null {
 function Index() {
   const [value, setValue] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
+  const [count, setCount] = useState<number | null>(null);
   const esRef = useRef<EventSource | null>(null);
   const doneRef = useRef(false);
 
   useEffect(() => () => esRef.current?.close(), []);
+
+  useEffect(() => {
+    let alive = true;
+    fetch(`${API_BASE}/api/stats`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (alive && typeof d?.count === "number") setCount(d.count);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   function closeStream() {
     esRef.current?.close();
@@ -87,6 +101,7 @@ function Index() {
         doneRef.current = true;
         closeStream();
         if (data.success) {
+          if (typeof data.count === "number") setCount(data.count);
           setStatus({ kind: "ok", message: "VERIFIED" });
         } else {
           setStatus({ kind: "error", message: "Something went wrong." });
@@ -175,18 +190,19 @@ function Index() {
           )}
         </form>
 
+        <div className="mt-10 flex flex-col items-center justify-center text-center">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+            Bypassed Double Counter
+          </p>
+          <div className="mt-3 flex h-24 w-full max-w-[12rem] items-center justify-center rounded-2xl border border-border bg-card/70 shadow-inner">
+            <span className="counter-glow font-display text-6xl tracking-tight text-foreground sm:text-7xl">
+              {count ?? "—"}
+            </span>
+          </div>
+        </div>
+
         <div className="mt-10 border-t border-border pt-5 text-center text-sm text-muted-foreground">
-          created by{" "}
-          <a href="#" className="font-medium text-foreground underline underline-offset-4">
-            Lret
-          </a>
-          <span className="px-2 opacity-60">·</span>
-          <a
-            href="https://discord.gg/L"
-            className="font-medium text-foreground underline underline-offset-4"
-          >
-            discord.gg/L
-          </a>
+          Made by <span className="font-medium text-foreground">Velorsi</span>
         </div>
       </section>
     </main>

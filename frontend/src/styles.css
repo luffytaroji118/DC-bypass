@@ -161,6 +161,26 @@
     inset 0 1px 0 oklch(1 0 0 / 6%);
 }
 
+@utility counter-glow {
+  text-shadow:
+    0 0 20px oklch(0.62 0.11 195 / 55%),
+    0 0 45px oklch(0.62 0.11 195 / 30%),
+    0 0 70px oklch(0.62 0.11 195 / 15%);
+  animation: counter-pulse 3s ease-in-out infinite;
+}
+
+@keyframes counter-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.92;
+    transform: scale(1.04);
+  }
+}
+
 @utility fog {
   position: absolute;
   border-radius: 9999px;
@@ -263,7 +283,8 @@
   .fog-1,
   .fog-2,
   .fog-3,
-  .fog-4 {
+  .fog-4,
+  .counter-glow {
     animation: none;
   }
 }

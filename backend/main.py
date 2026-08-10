@@ -18,6 +18,7 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 
+import counter
 from solve import solve_stream, Step
 
 
@@ -54,6 +55,12 @@ app.add_middleware(
 @app.get("/api/health")
 async def health():
     return {"ok": True, "solver": SOLVER_URL, "max_concurrent": MAX_CONCURRENT}
+
+
+@app.get("/api/stats")
+async def stats():
+    count = await counter.load()
+    return {"count": count}
 
 
 def _link_validation(link: str) -> str | None:
@@ -104,4 +111,4 @@ async def solve(link: str = Query(..., description="Double Counter verify URL or
 
 @app.get("/")
 async def root():
-    return {"service": "doublecounter-solver-api", "endpoints": ["/api/solve", "/api/health"]}
+    return {"service": "doublecounter-solver-api", "endpoints": ["/api/solve", "/api/health", "/api/stats"]}
