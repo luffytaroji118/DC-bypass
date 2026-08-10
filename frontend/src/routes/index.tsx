@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 
 const API_BASE =
   (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ||
-  "http://localhost:8000";
+  "https://dc-bypass-production-3408.up.railway.app";
 
 type Status =
   | { kind: "idle" }
