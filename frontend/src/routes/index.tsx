@@ -93,19 +93,19 @@ function Index() {
         if (data.success) {
           setStatus({ kind: "ok", message: "VERIFIED" });
         } else {
-          setStatus({ kind: "error", message: "Something went wrong. Please try again." });
+          setStatus({ kind: "error", message: "Something went wrong." });
         }
       } else if (data.step === "error") {
         doneRef.current = true;
         closeStream();
-        setStatus({ kind: "error", message: "Something went wrong. Please try again." });
+        setStatus({ kind: "error", message: "Something went wrong." });
       }
     };
 
     es.onerror = () => {
       if (doneRef.current) return;
       closeStream();
-      setStatus({ kind: "error", message: "Something went wrong. Please try again." });
+      setStatus({ kind: "error", message: "Something went wrong." });
     };
   }
 
