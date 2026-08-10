@@ -145,7 +145,9 @@ async def call_solver(
     try:
         return r.json()
     except ValueError:
-        return {"success": False, "err": f"solver non-JSON ({r.status_code})"}
+        snippet = r.text[:200].replace("\n", " ").strip() or "(empty body)"
+        ct = r.headers.get("content-type", "?")
+        return {"success": False, "err": f"solver non-JSON (HTTP {r.status_code}, ct={ct}): {snippet}"}
 
 
 async def solve_stream(
