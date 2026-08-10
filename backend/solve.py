@@ -122,6 +122,14 @@ def parse_userid_cookie(set_cookie_header: str) -> Optional[str]:
     return m.group(1) if m else None
 
 
+def normalize_solver_url(solver_url: str) -> str:
+    """Ensure the solver URL points at /solve (the API), not the HTML UI root."""
+    u = solver_url.rstrip("/")
+    if not u.endswith("/solve"):
+        u = u + "/solve"
+    return u
+
+
 async def call_solver(
     solver_url: str,
     page_url: str,
@@ -140,8 +148,9 @@ async def call_solver(
     if cdata:
         params["cdata"] = cdata
 
+    endpoint = normalize_solver_url(solver_url)
     timeout = httpx.Timeout(CONNECT_TIMEOUT, read=SOLVER_READ_TIMEOUT)
-    r = await client.get(solver_url, params=params, timeout=timeout)
+    r = await client.get(endpoint, params=params, timeout=timeout)
     try:
         return r.json()
     except ValueError:
