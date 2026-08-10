@@ -73,7 +73,7 @@ function Index() {
 
     closeStream();
     doneRef.current = false;
-    setStatus({ kind: "running", label: "Connecting..." });
+    setStatus({ kind: "running", label: "Connecting to server..." });
 
     const es = new EventSource(`${API_BASE}/api/solve?link=${encodeURIComponent(full)}`);
     esRef.current = es;
