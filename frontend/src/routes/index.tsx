@@ -8,14 +8,10 @@ export const Route = createFileRoute("/")({
       { title: "DoubleCounter Bypass — Paste a link, get a result" },
       {
         name: "description",
-        content:
-          "A minimal single-field tool interface: paste a DoubleCounter URL or code and submit it.",
+        content: "Double Counter Bypass",
       },
       { property: "og:title", content: "DoubleCounter Bypass" },
-      {
-        property: "og:description",
-        content: "A minimal single-field tool interface for DoubleCounter links and codes.",
-      },
+      { property: "og:description", content: "Double Counter Bypass" },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
