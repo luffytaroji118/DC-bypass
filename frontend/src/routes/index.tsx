@@ -73,7 +73,7 @@ function Index() {
 
     closeStream();
     doneRef.current = false;
-    setStatus({ kind: "running", label: "Connecting to server..." });
+    setStatus({ kind: "running", label: "Verifying..." });
 
     const es = new EventSource(`${API_BASE}/api/solve?link=${encodeURIComponent(full)}`);
     esRef.current = es;
@@ -91,27 +91,21 @@ function Index() {
         doneRef.current = true;
         closeStream();
         if (data.success) {
-          setStatus({
-            kind: "ok",
-            message: "VERIFIED",
-            ...(data.userid ? { userid: data.userid } : {}),
-          });
+          setStatus({ kind: "ok", message: "VERIFIED" });
         } else {
-          setStatus({ kind: "error", message: data.message || "Verification failed." });
+          setStatus({ kind: "error", message: "Something went wrong. Please try again." });
         }
       } else if (data.step === "error") {
         doneRef.current = true;
         closeStream();
-        setStatus({ kind: "error", message: data.message || "Error." });
-      } else {
-        setStatus({ kind: "running", label: data.message || data.step });
+        setStatus({ kind: "error", message: "Something went wrong. Please try again." });
       }
     };
 
     es.onerror = () => {
       if (doneRef.current) return;
       closeStream();
-      setStatus({ kind: "error", message: "Connection to server lost." });
+      setStatus({ kind: "error", message: "Something went wrong. Please try again." });
     };
   }
 
@@ -180,16 +174,7 @@ function Index() {
                 </span>
               )}
               {status.kind === "error" && status.message}
-              {status.kind === "ok" && (
-                <span>
-                  {status.message}
-                  {status.userid && (
-                    <span className="mt-1 block text-xs text-muted-foreground">
-                      userid: {status.userid}
-                    </span>
-                  )}
-                </span>
-              )}
+              {status.kind === "ok" && status.message}
             </div>
           )}
         </form>
